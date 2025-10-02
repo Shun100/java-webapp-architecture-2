@@ -1,0 +1,9 @@
+/app/HELP.md
+/app/.gradle
+/app/build/
+!/app/gradle/wrapper/gradle-wrapper.jar
+!/app/**/src/main/**/build/
+!/app/**/src/test/**/build/
+
+### VS Code ###
+.vscode/

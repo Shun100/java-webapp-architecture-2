@@ -2,18 +2,22 @@ package com.example.java_webapp_architecture.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.Autowired;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.java_webapp_architecture.dto.PersonDto;
+import com.example.java_webapp_architecture.service.PersonService;
 
 @Controller
 @RequestMapping("/spring_mvc_person")
 public class PersonController {
   @Autowired
-  private final PersonService personService = new PersonService();
+  private final PersonService personService = PersonService.getInstance();
 
   /**
    * 新規登録画面を開く
@@ -22,9 +26,7 @@ public class PersonController {
    */
   @GetMapping("/create")
   public String createPerson(@RequestParam int personId, Model model) {
-    // PersonDto person = new PersonDto(1, "Alice", 26, "female");
-    // model.addAttribute("person", person);
-    Option<PersonDto> optionalPerson = personService.getById(personId);
+    Optional<PersonDto> optionalPerson = personService.getById(personId);
     optionalPerson.ifPresent(person -> model.addAttribute("person", person));
     return "personInputPage";
   }
@@ -48,8 +50,4 @@ public class PersonController {
   public String getTable(Model model) {
     return "personTablePage";
   }
-
-
-
-
 }

@@ -61,8 +61,9 @@ public class PersonController {
    * @param Model model
    * @return String personTablePage - 登録者一覧画面
    */
+  /*
   @PostMapping("/update")
-  public String edit(
+  public String update(
     @RequestParam("personId") int id,
     @RequestParam("personName") String name,
     @RequestParam("age") int age,
@@ -80,6 +81,34 @@ public class PersonController {
       model.addAttribute("personList", personList);
 
     return "personTablePage";
+  }
+    */
+
+  /**
+   * 新規登録（POST - REDIRECT - GET パターン版）
+   * @param id
+   * @param model
+   * @return String redirect:/table - 一覧画面（リダイレクト）
+   */
+  @PostMapping("/update")
+  public String updateWithPostRedirectGet(
+    @RequestParam("personId") int id,
+    @RequestParam("personName") String name,
+    @RequestParam("age") int age,
+    @RequestParam("gender") String gender,
+    Model model
+  ) {
+
+    PersonDto personDto = new PersonDto(id, name, age, gender);
+
+    if (id == 0) {
+      personService.add(personDto);
+    } else {
+      personService.update(personDto);
+    }
+
+    // @{/table}にリダイレクトする。
+    return "redirect:/table";
   }
 
   /**

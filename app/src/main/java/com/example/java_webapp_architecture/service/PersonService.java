@@ -42,8 +42,13 @@ public class PersonService {
    * @param PersonDto person - 登録情報
    */
   public void add(PersonDto person) {
-    if (!personExists(person.personId())) {
-      personList.add(person);
+    if (person.personId() == 0) {
+      int newId = getNewId();
+
+      PersonDto newPerson =
+        new PersonDto(newId, person.personName(), person.age(), person.gender());
+      
+      personList.add(newPerson);
     }
   }
 
@@ -85,5 +90,22 @@ public class PersonService {
    */
   private boolean personExists(int id) {
     return personList.stream().anyMatch(person -> person.personId() == id);
+  }
+
+  private int getNewId() {
+    List<Integer> idList = personList.stream()
+      .map(person -> person.personId())
+      .toList();
+    
+    int newId = 1;
+    while (true) {
+      if (idList.contains(newId)) {
+        newId ++;
+      } else {
+        break;
+      }
+    }
+
+    return newId;
   }
 }

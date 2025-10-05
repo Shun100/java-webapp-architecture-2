@@ -31,15 +31,15 @@
         </td>
 
         <td>
-          <form method="POST" th:action="@{/spring_mvc/person/edit}" th:object="${person}">
-            <input type="hidden" th:field="*{personId}">
+          <form method="POST" th:action="@{/spring_mvc/person/edit}">
+            <input type="hidden" name="personId" th:value="${person.personId}">
             <button type="submit">編集</button>
           </form>
         </td>
 
         <td>
-          <form method="POST" th:action="@{/spring_mvc/person/delete}" th:object="${person}">
-            <input type="hidden" th:field="*{personId}">
+          <form method="POST" th:action="@{/spring_mvc/person/delete}">
+            <input type="hidden" name="personId" th:value="${person.personId}">
             <button type="submit">削除</button>
           </form>
         </td>
@@ -47,8 +47,9 @@
     </tbody>
   </table>
   
-  <form method="GET" th:action="@{/spring_mvc/person/create}">
+  <form method="GET" th:action="@{/create}">
     <button type="submit">作成</button>
+    <input type="hidden" name="personId" value="0">
   </form>
 </body>
 </html>

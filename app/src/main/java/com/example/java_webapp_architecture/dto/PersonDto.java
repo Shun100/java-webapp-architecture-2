@@ -5,4 +5,9 @@ public record PersonDto(
   String personName,
   int age,
   String gender
-) {}
+) {
+
+  public PersonDto() {
+    this(0, "", 0, null);
+  }
+}

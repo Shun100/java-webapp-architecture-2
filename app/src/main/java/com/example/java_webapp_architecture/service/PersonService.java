@@ -26,18 +26,31 @@ public class PersonService {
     return personService;
   }
 
+  /**
+   * 登録情報 取得
+   * @param int id
+   * @return Optional<PersonDto> personDto - 登録情報
+   */
   public Optional<PersonDto> getById(int id) {
     return personList.stream()
       .filter(person -> person.personId() == id)
       .findFirst();
   }
 
+  /**
+   * 新規登録
+   * @param PersonDto person - 登録情報
+   */
   public void add(PersonDto person) {
     if (!personExists(person.personId())) {
       personList.add(person);
     }
   }
 
+  /**
+   * 更新
+   * @param PersonDto person - 登録情報
+   */
   public void update(PersonDto person) {
     int id = person.personId();
 
@@ -47,6 +60,29 @@ public class PersonService {
     }
   }
 
+  /**
+   * 登録削除
+   * @param int id
+   */
+  public void delete(int id) {
+    if (personExists(id)) {
+      personList.removeIf(person -> person.personId() == id);
+    }
+  }
+
+  /**
+   * 全件取得
+   * @return List<PersonDto> personList - 登録者一覧
+   */
+  public List<PersonDto> getAll() {
+    return personList;
+  }
+
+  /**
+   * 登録済み / 未登録 確認
+   * @param int id - 登録者ID
+   * @return　boolean exists - true: 登録済み false: 未登録
+   */
   private boolean personExists(int id) {
     return personList.stream().anyMatch(person -> person.personId() == id);
   }

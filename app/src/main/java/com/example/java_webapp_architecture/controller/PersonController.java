@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 // import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.java_webapp_architecture.constant.Const;
 import com.example.java_webapp_architecture.dto.PersonDto;
 import com.example.java_webapp_architecture.service.PersonService;
 
@@ -32,6 +33,9 @@ public class PersonController {
     optionalPerson.ifPresentOrElse(
       person -> model.addAttribute("person", person),
       () -> model.addAttribute("person", new PersonDto()));
+    
+    model.addAttribute("idNotRegistered", Const.ID_NOT_REGISTERED);
+    model.addAttribute("ageNotRegistered", Const.AGE_NOT_REGISTERED);
 
     return "personInputPage";
   }
@@ -50,8 +54,9 @@ public class PersonController {
     Model model) {
 
       PersonDto personDto = new PersonDto(id, name, age, gender);
-
       model.addAttribute("person", personDto);
+
+      model.addAttribute("idNotRegistered", Const.ID_NOT_REGISTERED);
 
     return "personUpdatePage";
   }
@@ -71,7 +76,7 @@ public class PersonController {
     Model model) {
       PersonDto personDto = new PersonDto(id, name, age, gender);
 
-      if (id == 0) {
+      if (id == Const.ID_NOT_REGISTERED) {
         personService.add(personDto);
       } else {
         personService.update(personDto);
@@ -101,7 +106,7 @@ public class PersonController {
 
     PersonDto personDto = new PersonDto(id, name, age, gender);
 
-    if (id == 0) {
+    if (id == Const.ID_NOT_REGISTERED) {
       personService.add(personDto);
     } else {
       personService.update(personDto);

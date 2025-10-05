@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.java_webapp_architecture.constant.Const;
 import com.example.java_webapp_architecture.dto.PersonDto;
 
 @Service
@@ -42,7 +43,7 @@ public class PersonService {
    * @param PersonDto person - 登録情報
    */
   public void add(PersonDto person) {
-    if (person.personId() == 0) {
+    if (person.personId() == Const.ID_NOT_REGISTERED) {
       int newId = getNewId();
 
       PersonDto newPerson =

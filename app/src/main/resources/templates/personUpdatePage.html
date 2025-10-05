@@ -6,7 +6,7 @@
   <title>確認</title>
 </head>
 <body th:object="${person}">
-  <div th:if="*{personId != 0}">
+  <div th:if="(*{personId} != ${idNotRegistered})">
     ID: <span th:text="$*{personId}"></span>
   </div>
 

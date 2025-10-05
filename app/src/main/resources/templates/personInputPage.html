@@ -7,7 +7,7 @@
 </head>
 <body>
   <form th:action="@{/confirm}" method="POST" th:object="${person}">
-    <div th:if="*{personId} != 0">
+    <div th:if="(*{personId} != ${idNotRegistered})">
       <span th:text="'ID: ' + *{personId}"></span>
     </div>
 
@@ -30,7 +30,7 @@
 
       <tr>
         <td>年齢</td>
-        <td><input type="text" th:field="*{age}"></td>
+        <td><input type="text" name="age" th:value="${age == ageNotRegistered} ? '' : ${age}"></td>
         <td th:if="${#fields.hasErrors('age')}"
             th:errors="*{age}"
             style="color: red">

@@ -34,6 +34,7 @@
     <input type="hidden" th:field="*{personName}">
     <input type="hidden" th:field="*{age}">
     <input type="hidden" th:field="*{gender}">
+    <input type="hidden" name="token" th:value="${token}">
 
     <div>
       <button type="submit" th:formaction="@{/back}">戻る</button>

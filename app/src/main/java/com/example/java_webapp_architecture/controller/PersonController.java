@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.java_webapp_architecture.constant.Const;
 import com.example.java_webapp_architecture.dto.PersonDto;
 import com.example.java_webapp_architecture.service.PersonService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 // @RequestMapping("/spring_mvc_person")
@@ -51,12 +54,17 @@ public class PersonController {
     @RequestParam("personName") String name,
     @RequestParam("age") int age,
     @RequestParam("gender") String gender,
-    Model model) {
+    Model model,
+    HttpSession session) {
 
       PersonDto personDto = new PersonDto(id, name, age, gender);
       model.addAttribute("person", personDto);
 
       model.addAttribute("idNotRegistered", Const.ID_NOT_REGISTERED);
+
+      String token = generateToken();
+      session.setAttribute("token", token);
+      model.addAttribute("token", token);
 
     return "personUpdatePage";
   }
@@ -101,8 +109,15 @@ public class PersonController {
     @RequestParam("personName") String name,
     @RequestParam("age") int age,
     @RequestParam("gender") String gender,
+    @RequestParam("token") String token,
+    HttpSession session,
     Model model
   ) {
+
+    // トークン認証
+    if (!session.getAttribute("token").equals(token)) {
+      return "";
+    }
 
     PersonDto personDto = new PersonDto(id, name, age, gender);
 
@@ -155,5 +170,10 @@ public class PersonController {
     model.addAttribute("personlist", personList);
 
     return "personTablePage";
+  }
+
+  private String generateToken() {
+    String token = UUID.randomUUID().toString();
+    return token;
   }
 }

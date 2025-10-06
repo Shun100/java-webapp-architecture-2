@@ -54,16 +54,15 @@ public class PersonController {
     @RequestParam("personName") String name,
     @RequestParam("age") int age,
     @RequestParam("gender") String gender,
-    Model model,
-    HttpSession session) {
+    HttpSession session,
+    Model model) {
 
       PersonDto personDto = new PersonDto(id, name, age, gender);
       model.addAttribute("person", personDto);
 
       model.addAttribute("idNotRegistered", Const.ID_NOT_REGISTERED);
 
-      String token = generateToken();
-      session.setAttribute("token", token);
+      String token = generateToken(session);
       model.addAttribute("token", token);
 
     return "personUpdatePage";
@@ -115,17 +114,17 @@ public class PersonController {
   ) {
 
     // トークン認証
-    if (!session.getAttribute("token").equals(token)) {
-      return "";
-    }
+    boolean isApproved = verifyToken(token, session);
 
-    PersonDto personDto = new PersonDto(id, name, age, gender);
-
-    if (id == Const.ID_NOT_REGISTERED) {
-      personService.add(personDto);
-    } else {
-      personService.update(personDto);
-    }
+    if (isApproved) {
+      // 登録処理
+      PersonDto personDto = new PersonDto(id, name, age, gender);
+      if (id == Const.ID_NOT_REGISTERED) {
+        personService.add(personDto);
+      } else {
+        personService.update(personDto);
+      }
+    } 
 
     // @{/table}にリダイレクトする。
     return "redirect:/table";
@@ -172,8 +171,22 @@ public class PersonController {
     return "personTablePage";
   }
 
-  private String generateToken() {
+  private String generateToken(HttpSession session) {
     String token = UUID.randomUUID().toString();
+    session.setAttribute("token", token);
     return token;
+  }
+
+  private boolean verifyToken(String token, HttpSession session) {
+    Object raw = session.getAttribute("token");
+    Optional<String> optionalToken = Optional.ofNullable(raw).map(Object::toString);
+
+    boolean isApproved = optionalToken
+      .filter(masterToken -> masterToken.equals(token))
+      .isPresent();
+    
+    session.removeAttribute("token");
+    
+    return isApproved;
   }
 }

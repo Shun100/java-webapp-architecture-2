@@ -6,6 +6,8 @@
   <title>ユーザ一覧</title>
 </head>
 <body>
+  <div th:if="${errorMessage}" style="color:red" th:text="${errorMessage}"></div>
+
   <table border="1">
     <thead>
       <tr>

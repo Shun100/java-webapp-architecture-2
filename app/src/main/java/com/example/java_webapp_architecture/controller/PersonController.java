@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 // import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.java_webapp_architecture.constant.Const;
 import com.example.java_webapp_architecture.dto.PersonDto;
@@ -110,7 +111,8 @@ public class PersonController {
     @RequestParam("gender") String gender,
     @RequestParam("token") String token,
     HttpSession session,
-    Model model
+    Model model,
+    RedirectAttributes redirectAttributes
   ) {
 
     // トークン認証
@@ -124,7 +126,11 @@ public class PersonController {
       } else {
         personService.update(personDto);
       }
-    } 
+    } else {
+      redirectAttributes.addFlashAttribute(
+        "errorMessage",
+        "不正なリクエストです。始めからやり直してください。");
+    }
 
     // @{/table}にリダイレクトする。
     return "redirect:/table";

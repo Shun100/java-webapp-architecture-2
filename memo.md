@@ -367,4 +367,7 @@ flowchart LR
         <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
         ${fn:escapeXml(someParam)}
       ```
-  
+
+## 6 ビジネス層の設計パターン
+
+### 6.1 Domain ModelパターンとTransaction Scriptパターン

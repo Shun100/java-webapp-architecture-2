@@ -2,6 +2,9 @@ package com.example.java_webapp_architecture.service.entity;
 
 import java.util.Date;
 
+/*
+ * 取引クラス
+ */
 public abstract class Transaction {
   /*
    * フィールド
@@ -26,5 +29,16 @@ public abstract class Transaction {
   /**
    * メソッド
    */
+  // 送料計算
+  public abstract void calcDeliveryCharge();
+
+  // 住所に応じた送料の取得
+  protected int getDeliveryChargeByAddress() {
+    if (Util.isRemoteLocation(customer.getAddress())) {
+      return 1300;
+    } else {
+      return 700;
+    }
+  }
 
 }

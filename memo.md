@@ -370,4 +370,53 @@ flowchart LR
 
 ## 6 ビジネス層の設計パターン
 
-### 6.1 Domain ModelパターンとTransaction Scriptパターン
+### 6.1 Domain Model パターンとTransaction Script パターン
+
+- Domain Model パターン
+  - 状態（フィールド）と振る舞い（メソッド）を同じクラスに実装する。
+  - オブジェクト指向に従ったパターン
+- Transaction Script パターン
+  - 状態（フィールド）と振る舞い（メソッド）を別クラスに分けて実装する。
+  - 手続き型に従ったパターン
+
+- Domain Modelの構成要素
+  - 1. Entity
+    - 業務要件における名詞から抽出したオブジェクトのうち、何らかのID（識別子）によって識別される概念を持つもの。
+      - 「顧客」や「注文取引」など
+  - 2. Value Object
+    - 業務要件における名詞から抽出したオブジェクトのうち、識別の概念を持たないオブジェクト
+      - 「金銭」や「色」など
+  
+  - ある名詞がEnityなのかValue Objectなのかは、アプリケーションの要件次第
+    - 例えば「ネットショップ」では「住所」は顧客の特性のうち一つに過ぎないため、Value Objectになる。
+      - 仮に同一の住所をもつ顧客（家族など）がいても問題は無い。
+    - 一方で「物件管理システム」では「住所」はEntityになる。
+  
+  - Value Objectは状態を変更する必要がないため、イミュータブルなオブジェクトとして実装するのが一般的
+    - 例えば「販売管理アプリ」では、「顧客」の他に「取引先」というEntityがあるものとすると、「顧客」も「取引先」も「住所」という概念は同じなので、「住所」をValue ObjectとしてEntityに埋め込んで再利用する。 
+
+  - 3. Domain Service
+    - 振る舞いのみを表すオブジェクトであり、通常は状態を持たない。
+  
+  - 振る舞いは通常はEntityかValue Objectにメソッドとして実行するが、それが設計上不自然な場合はDomain Serviceとして独立させる。
+    - 例えば、「入金する」や「出金する」は「口座」Entityに属する振る舞いと考えるべきです。
+    - それに対して、「振替する」は2つのEntityの間をデータが行き来するため、Entityのメソッドにするよりは、独立したDomain Serviceにする方が自然です。
+
+### 6.3.2 Domain Modelのサンプル
+
+- ネットショップを例にすると、以下のDomain Model クラスが存在する。
+  - Entity
+    - Transaction:          取引
+    - OrderTransaction:     注文取引
+    - OrderDetail:          注文詳細
+    - ReturnTransaction:    返品取引
+    - Customer:             会員
+    - GeneralCustomer:      一般会員
+    - GoldCustomer:         ゴールド会員
+  - Domain Service
+    - Order Service:        注文サービス
+    - Return Service:       返品サービス
+  - DTO (状態を持つのみのクラス)
+    - OrderTransactionDTO   注文取引 DTO
+    - OrderDetailDTO        注文詳細 DTO
+    - ReturnTransactionDTO  返品取引 DTO

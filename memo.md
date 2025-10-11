@@ -420,3 +420,98 @@ flowchart LR
     - OrderTransactionDTO   注文取引 DTO
     - OrderDetailDTO        注文詳細 DTO
     - ReturnTransactionDTO  返品取引 DTO
+
+## 6.4 ビジネスロジックの効率的な構築
+
+- 高い拡張性や再利用性を確保するための設計パターン
+
+### 6.4.1 条件分岐によるロジックの切り替え
+
+- if ~ else if elseが重なったり、それぞれのブロック内の処理が大きくなると、コード全体の見通しが悪くなる。
+  - このような場合は、Strategyパターンが使える。
+- Strategyパターンとは
+  - 複数のロジックに共通的なインタフェースを定義し、個々のロジック（ストラテジ）は当該インタフェースを実装することで実現する。
+
+  ``` Java
+    // 送料計算ストラテジのインタフェース
+    public interface DeliveryChargeStrategy {
+      int calcDeliveryCharge();
+    }
+
+    // 通常の送料計算ストラテジ
+    public class NormalDeliveryCharteStrategy implements DeliveryChargeStrategy {
+      private int totalPrice;
+      private String address;
+
+      @Override
+      public int calcDeliveryCharge() {
+        if (5000 <= totalPrice) {
+          return 0; // 5000円以上の買い物で送料無料
+        } else {
+          if (Util.isRemoteLocation(address)) {
+            return 1300; // 遠隔地
+          } else {
+            return 700; // 遠隔地以外
+          }
+        }
+      }
+    }
+
+    // 特別な送料計算ストラテジ
+    public class SpecialDeliveryChargeStrategy implements DeliveryChargeStrategy {
+      private int totalPrice;
+      private String address;
+
+      @Override
+      public int calcDeliveryCharge() {
+        if (2000 <= totalPrice) {
+          return 0; // 2000円以上の買い物で送料無料
+        } else {
+          if (Util.isRemoteLocation(address)) {
+            return 1000; // 遠隔地
+          } else {
+            return 500; // 遠隔地以外
+          }
+        }
+      }
+    }
+  ```
+
+- ストラテジパターンでは、個々のストラテジはStrategyインタフェースをimplementsして実装する。
+- 利用するときは以下のようにする。
+
+  ``` Java
+    int customerId = orderTransactionDTO.getCustomerId();
+    AbstractCustomer customer = CustomerDAO.findCustomer(customerId);
+
+    // ストラテジの取得
+    DeliveryChargeStrategy deliveryChargeStrategy = null;
+    switch(customer.getCustomerType()) {
+      case 1:
+        deliveryChargeStrategy = new NormalDeliveryChargeStrategy(
+          orderTransactionDTO.getTotalPrice(), customer.getAddress());
+        break;
+      case 2:
+        deliveryChargeStrategy = new NormalDeliveryChargeStrategy(
+          orderTransactionDTO.getTotalPrice(), customer.getAddress());
+        break;
+      case 3:
+        deliveryChargeStrategy = new SpecialDeliveryChargeStrategy(
+          orderTransactionDTO.getTotalPrice(), customer.getAddress());
+        break;
+    }
+
+    // 注文取引エンティティの生成
+    OrderTransaction orderTransaction = new OrderTransaction(
+      customer,
+      orderTransactionDTO.getOrderDate(),
+      orderDetailList,
+      orderTransactionDTO,
+      getTotalPrice(),
+      customer.getAddress(),
+      deliveryChargeStrategy);
+    
+    // 送料の計算
+    orderTransaction.calcDeliveryCharge();
+  ```
+
